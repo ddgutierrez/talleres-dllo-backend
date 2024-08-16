@@ -63,5 +63,5 @@ function peorParidad(numero) {
 
 for (let i=0;i<11;i++){
     console.log(i+' '+mejorParidad(i));
-    //console.log(i+' '+peorParidad(i));
+    console.log(i+' '+peorParidad(i));
 }
