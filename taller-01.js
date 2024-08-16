@@ -9,7 +9,7 @@ function resolvedor(a, b, c, positivo = true) {
     let discriminante = Math.pow(b, 2) - 4 * a * c;
     
     if (discriminante < 0) {
-        return "No hay solucion real";
+        return null;
     }
     
     let raizDiscriminante = Math.sqrt(discriminante);
@@ -32,15 +32,8 @@ console.log(resultadoPositivo);
 console.log(resultadoNegativo);
 
 function mejorParidad(numero) {
-    if (numero % 2 === 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return numero%2==0;
 }
-
-let numero = 10;
-console.log(mejorParidad(0));
 
 function peorParidad(numero) {
     if (numero == 0){
@@ -68,8 +61,7 @@ function peorParidad(numero) {
     }
 }
 
-numero = 5;
 for (let i=0;i<11;i++){
-    console.log(i+' '+peorParidad(i));
-    
+    console.log(i+' '+mejorParidad(i));
+    //console.log(i+' '+peorParidad(i));
 }
