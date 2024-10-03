@@ -1,0 +1,5 @@
+# Ignore node_modules folder
+node_modules/
+
+# Ignore 23-taller-04-datos.json in the src directory
+src/23-taller-04-datos.json
