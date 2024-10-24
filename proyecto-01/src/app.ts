@@ -1,27 +1,17 @@
-import userRoutes from "./user/v1/user.routes";
 import express from "express";
-import { Request, Response } from "express";
 import cors from "cors";
+import userRoutes from "./user/v1/user.routes";
+import bookRoutes from "./book/v1/book.routes";
 
-// ROUTES
-const SERVER_VERSION = "/api/v1/";
-
-// FALLBACKS
-function routeNotFound(request: Request, response: Response) {
-  response.status(404).json({
-    message: "Route not found.",
-  });
-}
-
+// Function to create and configure the Express app
 export default function createApp() {
-  // MIDDLEWARES
-  const app = express();
+    const app = express();
 
-  app.use(cors());
-  app.use(express.json());
-  
-  app.use(SERVER_VERSION + "users", userRoutes);
-  
-  app.use(routeNotFound);
-  return app;
+    app.use(cors());
+    app.use(express.json());
+
+    app.use("/api/v1/users", userRoutes);  // Ruta para usuarios
+    app.use("/api/v1/books", bookRoutes);  // Ruta para libros
+
+    return app;  // Retornamos la aplicación configurada
 }

@@ -1,11 +1,9 @@
-import { UserModel, UserType } from "./user.model";
+import { Request, Response } from "express";
+import { Database } from "../../server";
 
-// DECLARE ACTION FUNCTION
-async function readUserAction(): Promise<UserType[]> {
-  const results = await UserModel.find();
-
-  return results;
+// Action to get all active users
+export function getUsers(req: Request, res: Response) {
+    const users = Database.getUsers();
+    const activeUsers = users.filter(user => user.active);
+    res.json(activeUsers);
 }
-
-// EXPORT ACTION FUNCTION
-export default readUserAction;

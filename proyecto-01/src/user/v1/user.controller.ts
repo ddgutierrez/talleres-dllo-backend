@@ -1,19 +1,27 @@
-import createUserAction from "./create.user.action";
-import readUserAction from "./read.user.action";
-import { UserType } from "./user.model";
-import { CreateUserType } from "./user.types";
+import { Request, Response } from "express";
+import { createUser } from "./create.user.action";
+import { getUsers } from "./read.user.action";
+import { updateUser } from "./update.user.action";
+import { deleteUser } from "./delete.user.action";
 
-// DECLARE CONTROLLER FUNCTIONS
-async function readUsers(): Promise<UserType[]> {
-  const users = await readUserAction();
+// Controller to handle all user-related actions
 
-  return users;
-}
-async function createUser(userData: CreateUserType): Promise<UserType> {
-  const createdUser = await createUserAction(userData);
-
-  return createdUser;
+// Controller function to create a user
+export function createUserController(req: Request, res: Response) {
+    return createUser(req, res);  // Delegate to the create action
 }
 
-// EXPORT CONTROLLER FUNCTIONS
-export { readUsers, createUser };
+// Controller function to read all active users
+export function getUsersController(req: Request, res: Response) {
+    return getUsers(req, res);  // Delegate to the read action
+}
+
+// Controller function to update a user
+export function updateUserController(req: Request, res: Response) {
+    return updateUser(req, res);  // Delegate to the update action
+}
+
+// Controller function to deactivate (soft delete) a user
+export function deleteUserController(req: Request, res: Response) {
+    return deleteUser(req, res);  // Delegate to the delete action
+}

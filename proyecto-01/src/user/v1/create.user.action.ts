@@ -1,12 +1,23 @@
-import { UserModel, UserType } from "./user.model";
+import { Request, Response } from "express";
+import { Database } from "../../server";
+import { User, UserType } from "./user.model";
 import { CreateUserType } from "./user.types";
 
-// DECLARE ACTION FUNCTION
-async function createUserAction(userData: CreateUserType): Promise<UserType> {
-  const results = await UserModel.create(userData);
+// Action to create a new user
+export function createUser(req: Request, res: Response) {
+    const { name, email, password, role = "user" } = req.body as CreateUserType;
 
-  return results;
+    const newUser: UserType = {
+        id: String(Database.getUsers().length + 1),  // Generate simple ID
+        name,
+        email,
+        password,
+        role,
+        active: true
+    };
+
+    const user = new User(newUser);
+    Database.addUser(user);
+
+    res.status(201).json({ message: "User created", user });
 }
-
-// EXPORT ACTION FUNCTION
-export default createUserAction;
