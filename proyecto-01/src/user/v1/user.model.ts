@@ -1,40 +1,42 @@
-// DECLARE USER MODEL TYPE
-type UserType = {
-    id: string;
+import { Schema, model } from "mongoose";
+
+// DECLARE MODEL TYPE
+export type UserType = {
+    _id: string;
     name: string;
     email: string;
     password: string;
-    role: 'user' | 'admin';
+    role: string;
     active: boolean;
 };
 
-// CLASS TO SIMULATE SCHEMA FUNCTIONALITY
-class User {
-    public id: string;
-    public name: string;
-    public email: string;
-    public password: string;
-    public role: 'user' | 'admin';
-    public active: boolean;
-
-    constructor(user: UserType) {
-        this.id = user.id;
-        this.name = user.name;
-        this.email = user.email;
-        this.password = user.password;
-        this.role = user.role;
-        this.active = user.active;
+// DECLARE MONGOOSE SCHEMA
+const UserSchema = new Schema<UserType>({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        default: 'user'
+    },
+    active: {
+        type: Boolean,
+        default: true
     }
+}, {
+    timestamps: true,  // Adds createdAt and updatedAt fields
+    versionKey: false  // Disables __v (versioning field)
+});
 
-    // Method to deactivate the user (soft delete)
-    deactivate() {
-        this.active = false;
-    }
-
-    // Method to check if user is admin
-    isAdmin() {
-        return this.role === 'admin';
-    }
-}
-
-export { User, UserType };
+// DECLARE MONGO MODEL
+export const UserModel = model<UserType>("User", UserSchema);

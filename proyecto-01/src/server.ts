@@ -1,19 +1,15 @@
-import createApp from "./app";
+import createApp from './app';
+import handleMongoConnection from './db';
 
 const app = createApp();
 
-// START SERVER
-app.listen(3000, () => {
-  console.log("Server listening to port 3000.");
-});
+// Start the server after MongoDB is connected
+const startServer = async () => {
+    await handleMongoConnection();  // Ensure MongoDB is connected first
 
-// Simulated in-memory "database"
-let users: any[] = [];
-let books: any[] = [];
-
-export const Database = {
-  getUsers: () => users,
-  addUser: (user: any) => users.push(user),
-  getBooks: () => books,
-  addBook: (book: any) => books.push(book),
+    app.listen(3000, () => {
+        console.log('Server listening on port 3000.');
+    });
 };
+
+startServer();

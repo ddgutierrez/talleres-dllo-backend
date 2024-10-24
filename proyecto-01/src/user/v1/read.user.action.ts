@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { Database } from "../../server";
+import { UserModel } from "./user.model";
 
 // Action to get all active users
 export function getUsers(req: Request, res: Response) {
-    const users = Database.getUsers();
-    const activeUsers = users.filter(user => user.active);
-    res.json(activeUsers);
+    // Find all users where 'active' is true
+    UserModel.find({ active: true })
+        .then((users) => res.json(users))
+        .catch(err => res.status(500).json({ message: "Error fetching users", error: err.message }));
 }
