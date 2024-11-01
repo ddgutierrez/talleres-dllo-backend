@@ -3,6 +3,7 @@ import { createUser } from "./create.user.action";
 import { getUsers } from "./read.user.action";
 import { updateUser } from "./update.user.action";
 import { deleteUser } from "./delete.user.action";
+import { loginUser } from "./login.user.action";
 
 // Controller to handle all user-related actions
 
@@ -24,4 +25,8 @@ export function updateUserController(req: Request, res: Response) {
 // Controller function to deactivate (soft delete) a user
 export function deleteUserController(req: Request, res: Response) {
     return deleteUser(req, res);  // Delegate to the delete action
+}
+
+export function loginUserController(req: Request, res: Response) {
+    return loginUser(req, res);  // Delegate to the delete action
 }

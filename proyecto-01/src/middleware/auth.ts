@@ -1,19 +1,29 @@
 import { NextFunction, Request, Response } from "express";
-import {decode} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export async function AuthMiddleware(request: Request, response: Response, next: NextFunction) {
+    const authHeader = request.headers.authorization;
 
-    if (request.headers.authorization === undefined) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return response.status(401).json({
             message: "Not authorized."
-        })
+        });
     }
 
- const jwtValues = decode(request.headers.authorization);
- 
- // hago busqueda de usuario usando id de JWT Values
+    try {
+        // Extraer el token del encabezado
+        const token = authHeader.split(" ")[1];
+        
+        // Verificar el token
+        const jwtValues = jwt.verify(token, process.env.JWT_SECRET || "secret");
 
- request.body.user = jwtValues;
- 
- next();
+        // Adjuntar los valores decodificados al objeto `request`
+        request.body.user = jwtValues;
+        
+        next();
+    } catch (err) {
+        return response.status(401).json({
+            message: "Invalid or expired token."
+        });
+    }
 }

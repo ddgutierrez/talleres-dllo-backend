@@ -1,19 +1,14 @@
 import { Router } from "express";
 import { createBookController, getBooksController, updateBookController, deleteBookController, } from "./book.controller";
-
+import { AuthMiddleware } from "../../middleware/auth";
 const bookRoutes = Router();
 
-// CREATE BOOK
-bookRoutes.post("/", createBookController);
+// Public endpoint
+bookRoutes.get("/:id?", getBooksController);
 
-// READ BOOKS
-bookRoutes.get("/", getBooksController);
-
-
-// UPDATE BOOK
-bookRoutes.put("/:id", updateBookController);
-
-// DELETE BOOK (Soft delete)
-bookRoutes.delete("/:id", deleteBookController);
+// Protected endpoints
+bookRoutes.post("/create", AuthMiddleware, createBookController);
+bookRoutes.put("/update/:id", AuthMiddleware, updateBookController);
+bookRoutes.delete("/delete/:id", AuthMiddleware, deleteBookController);
 
 export default bookRoutes;

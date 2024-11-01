@@ -1,21 +1,17 @@
 import { Router } from "express";
-import { createUser } from "./create.user.action";
-import { getUsers } from "./read.user.action";
-import { updateUser } from "./update.user.action";
-import { deleteUser } from "./delete.user.action";
+import { createUserController, getUsersController, updateUserController, deleteUserController, loginUserController, } from "./user.controller";
+import { AuthMiddleware } from "../../middleware/auth";
 
 const userRoutes = Router();
 
 // CREATE USER
-userRoutes.post("/", createUser);
+userRoutes.post("/create", createUserController);
+userRoutes.post("/login", loginUserController);
 
 // READ USERS
-userRoutes.get("/", getUsers);
+userRoutes.get("/", getUsersController);
 
-// UPDATE USER
-userRoutes.put("/:id", updateUser);
-
-// DELETE USER (Soft delete)
-userRoutes.delete("/:id", deleteUser);
+userRoutes.put("/update/:id", AuthMiddleware, updateUserController);
+userRoutes.delete("/delete/:id", AuthMiddleware, deleteUserController);
 
 export default userRoutes;
