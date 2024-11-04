@@ -9,7 +9,7 @@ export async function getUsers(req: Request, res: Response) {
 
         // Si se proporciona un ID, buscar un solo usuario
         if (id) {
-            const user = await UserModel.findById(id);
+            const user = await UserModel.findById(id).select('-password');
             if (!user || (!user.active && !includeDisabled)) {
                 return res.status(404).json({ message: "Usuario no encontrado o inhabilitado" });
             }

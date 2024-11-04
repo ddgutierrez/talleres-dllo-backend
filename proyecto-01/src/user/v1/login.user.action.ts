@@ -15,13 +15,13 @@ export async function loginUser(req: Request, res: Response) {
 
         // Generar un token JWT
         const token = jwt.sign(
-            { id: user._id, email: user.email, role: user.role },
+            { id: user._id, email: user.email, role: user.permissions },
             process.env.JWT_SECRET || "secret",  // Usa una variable de entorno para la clave secreta
             { expiresIn: "1h" }  // Tiempo de expiración del token
-        );
+        );        
 
         // Enviar el token en la respuesta
-        return res.json({ message: "Inicio de sesión exitoso", token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+        return res.json({ message: "Inicio de sesión exitoso", token, user: { id: user._id, email: user.email, name: user.name, role: user.permissions } });
     } catch (err: any) {
         // Verificar si el error es una instancia de Error y obtener el mensaje de forma segura
         const errorMessage = err instanceof Error ? err.message : "Ocurrió un error desconocido";

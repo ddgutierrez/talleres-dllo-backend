@@ -1,40 +1,33 @@
 import { Request, Response } from "express";
 import { BookModel } from "./book.model";
 
-// Acción para buscar libros por ID o filtros
+// Action to get books by filters or by ID
 export async function getBooks(req: Request, res: Response) {
-    try {
-        const { id } = req.params;
-        const { includeDisabled } = req.query;
+    const { id } = req.params;
+    const { genre, publishedDate, author, name, available, publisher } = req.query;
 
-        // Si se proporciona un ID, buscar un solo libro
+    try {
         if (id) {
             const book = await BookModel.findById(id);
-            if (!book || (!book.available && !includeDisabled)) {
-                return res.status(404).json({ message: "Libro no encontrado" });
+            if (!book) {
+                return res.status(404).json({ message: "Book not found" });
             }
             return res.json(book);
         }
 
-        // Si no se proporciona un ID, buscar con filtros
-        const { genre, author, publishedDate, publisher, title, available } = req.query;
+        // Create a query object based on the provided filters
+        const query: any = {};
+        if (genre) query.genre = genre;
+        if (publishedDate) query.publishedDate = publishedDate;
+        if (author) query.author = author;
+        if (name) query.title = name;
+        if (available !== undefined) query.available = available;
+        if (publisher) query.publisher = publisher;
 
-        // Construir el objeto de filtros dinámicamente
-        const filters: any = {
-            ...(includeDisabled !== 'true' && { active: true })  // Filtra solo activos si includeDisabled no es 'true'
-        };
-        if (genre) filters.genre = genre;
-        if (author) filters.author = author;
-        if (publishedDate) filters.publishedDate = new Date(publishedDate as string);
-        if (publisher) filters.publisher = publisher;
-        if (title) filters.title = { $regex: title, $options: 'i' };  // Búsqueda insensible a mayúsculas
-        if (available !== undefined) filters.available = available === 'true';
-
-        // Buscar libros que coincidan con los filtros
-        const books = await BookModel.find(filters);
+        const books = await BookModel.find(query);
         return res.json(books);
     } catch (err: any) {
-        const errorMessage = err instanceof Error ? err.message : "Ocurrió un error desconocido";
-        return res.status(500).json({ message: "Error al buscar libros", error: errorMessage });
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+        return res.status(500).json({ message: "Error fetching books", error: errorMessage });
     }
 }

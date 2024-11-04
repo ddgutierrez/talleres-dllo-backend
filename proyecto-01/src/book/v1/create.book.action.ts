@@ -1,21 +1,16 @@
 import { Request, Response } from "express";
-import { BookModel, BookType } from "./book.model";
+import { BookModel } from "./book.model";
 
 // Action to create a new book
-export function createBook(req: Request, res: Response) {
-    const { title, author, genre, publishedDate } = req.body as Omit<BookType, '_id'>;
-    // Create a new book instance from the request body
-    const newBook = new BookModel({
-        title,
-        author,
-        genre,
-        publishedDate: new Date(publishedDate),  // Convert to Date object
-        available: true,
-        reservations: []  // No reservations initially
-    });
+export async function createBook(req: Request, res: Response) {
+    const { title, author, genre, publishedDate } = req.body;
 
-    // Save the book to MongoDB
-    newBook.save()
-        .then((book) => res.status(201).json({ message: "Book created", book }))
-        .catch(err => res.status(500).json({ message: "Error creating book", error: err.message }));
+    try {
+        const newBook = new BookModel({ title, author, genre, publishedDate, available: true });
+        const savedBook = await newBook.save();
+        return res.status(201).json({ message: "Book created successfully", book: savedBook });
+    } catch (err: any) {
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+        return res.status(500).json({ message: "Error creating book", error: errorMessage });
+    }
 }

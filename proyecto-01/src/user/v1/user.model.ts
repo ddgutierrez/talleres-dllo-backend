@@ -6,7 +6,7 @@ export type UserType = {
     name: string;
     email: string;
     password: string;
-    role: string;
+    permissions: string[];  // Arreglo de permisos
     active: boolean;
 };
 
@@ -25,9 +25,9 @@ const UserSchema = new Schema<UserType>({
         type: String,
         required: true
     },
-    role: {
-        type: String,
-        default: 'user'
+    permissions: {
+        type: [String],  // Define un arreglo de strings para los permisos
+        default: []  // Por defecto, el usuario no tiene permisos
     },
     active: {
         type: Boolean,
