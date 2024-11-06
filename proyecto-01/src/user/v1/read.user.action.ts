@@ -22,7 +22,7 @@ export async function getUsers(req: Request, res: Response) {
         };
 
         // Buscar usuarios
-        const users = await UserModel.find(filters);
+        const users = await UserModel.find(filters).select('-password');
         return res.json(users);
     } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : "Ocurrió un error desconocido";

@@ -4,7 +4,7 @@ import { BookModel } from "./book.model";
 // Action to get books by filters or by ID
 export async function getBooks(req: Request, res: Response) {
     const { id } = req.params;
-    const { title, author, genre, publishedDate, available, editorial, active} = req.query;
+    const { title, author, genre, publishedDate, available, editorial, active } = req.query;
 
     try {
         if (id) {
@@ -23,7 +23,13 @@ export async function getBooks(req: Request, res: Response) {
         if (title) query.title = title;
         if (available) query.available = available;
         if (editorial) query.editorial = editorial;
-        if (active !== undefined) query.active = active;
+        // Si el parámetro `active` no se especifica, busca solo las entradas activas
+        if (active !== undefined) {
+            query.active = active;
+        } else {
+            query.active = true; // Por defecto, solo devuelve las entradas activas
+        }
+
 
         const books = await BookModel.find(query);
         return res.json(books);
