@@ -6,7 +6,7 @@ export async function deleteBook(req: Request, res: Response) {
     const { id } = req.params;
 
     try {
-        const book = await BookModel.findByIdAndUpdate(id, { available: false }, { new: true });
+        const book = await BookModel.findByIdAndUpdate(id, { active: false }, { new: true });
         if (!book) {
             return res.status(404).json({ message: "Book not found" });
         }

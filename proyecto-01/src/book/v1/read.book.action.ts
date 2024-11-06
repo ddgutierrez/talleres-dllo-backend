@@ -4,7 +4,7 @@ import { BookModel } from "./book.model";
 // Action to get books by filters or by ID
 export async function getBooks(req: Request, res: Response) {
     const { id } = req.params;
-    const { genre, publishedDate, author, name, available, publisher } = req.query;
+    const { title, author, genre, publishedDate, available, editorial, active} = req.query;
 
     try {
         if (id) {
@@ -20,9 +20,10 @@ export async function getBooks(req: Request, res: Response) {
         if (genre) query.genre = genre;
         if (publishedDate) query.publishedDate = publishedDate;
         if (author) query.author = author;
-        if (name) query.title = name;
-        if (available !== undefined) query.available = available;
-        if (publisher) query.publisher = publisher;
+        if (title) query.title = title;
+        if (available) query.available = available;
+        if (editorial) query.editorial = editorial;
+        if (active !== undefined) query.active = active;
 
         const books = await BookModel.find(query);
         return res.json(books);

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createBookController, getBooksController, updateBookController, deleteBookController, } from "./book.controller";
 import { AuthMiddleware } from "../../middleware/auth";
-import { checkPermissions } from "../../middleware/checkpermissions";  // Importa el middleware de permisos
+import { checkPermissions } from "../../middleware/checkPermissions";  // Importa el middleware de permisos
 
 const bookRoutes = Router();
 

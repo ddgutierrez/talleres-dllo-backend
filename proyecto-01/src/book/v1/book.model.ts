@@ -8,6 +8,8 @@ type BookType = {
     genre: string;
     publishedDate: Date;
     available: boolean;
+    editorial: string;
+    active: boolean;
 };
 
 // DECLARE MONGOOSE SCHEMA
@@ -29,6 +31,14 @@ const BookSchema = new Schema<BookType>({
         required: true
     },
     available: {
+        type: Boolean,
+        default: true
+    },
+    editorial: {
+        type: String,
+        required: true
+    },
+    active: {
         type: Boolean,
         default: true
     }

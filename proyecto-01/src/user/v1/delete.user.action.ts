@@ -19,7 +19,7 @@ export async function deleteUser(req: Request, res: Response) {
 
     try {
         // Buscar al usuario por ID y marcarlo como inactivo (soft delete)
-        const user = await UserModel.findByIdAndUpdate(id, { active: false }, { new: true });
+        const user = await UserModel.findByIdAndUpdate(id, { active: false }, { new: true }).select('-password');
 
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado" });

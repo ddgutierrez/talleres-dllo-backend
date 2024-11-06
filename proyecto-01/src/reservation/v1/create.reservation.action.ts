@@ -23,13 +23,19 @@ export async function createReservation(req: Request, res: Response) {
             return res.status(400).json({ message: "Book is not available for reservation" });
         }
 
+        if (!book.active) {
+            return res.status(400).json({ message: "Book is not active" });
+        }
+
         // Create the reservation
         const newReservation = new ReservationModel({
             bookId: book._id,
             userId: user._id,
             reservedBy: user.name,
+            book: book.title,
             reservedAt: new Date(),
-            dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)  // Due in 7 days
+            dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            active: true,
         });
 
         // Save the reservation and update book availability

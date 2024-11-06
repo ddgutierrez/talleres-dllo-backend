@@ -4,7 +4,7 @@ import { ReservationModel } from "./reservation.model";
 // Action to get all reservations
 export async function readReservations(req: Request, res: Response) {
     try {
-        const reservations = await ReservationModel.find().populate("bookId").populate("userId");
+        const reservations = await ReservationModel.find();
         return res.json({ reservations });
     } catch (error: any) {
         console.error("Error reading reservations:", error);

@@ -6,6 +6,7 @@ import { BookModel } from "../../book/v1/book.model";
 export async function cancelReservation(req: Request, res: Response) {
     try {
         const { id } = req.params;
+        const userid = req.body.user.id;
 
         // Find the reservation
         const reservation = await ReservationModel.findById(id);
@@ -13,15 +14,21 @@ export async function cancelReservation(req: Request, res: Response) {
             return res.status(404).json({ message: "Reservation not found" });
         }
 
+        if(userid != reservation.userId){
+            return res.status(403).json({ message: "You are not authorized to cancel this reservation" });
+        }
+
         // Mark the book as available
         const book = await BookModel.findById(reservation.bookId);
-        if (book) {
+        if(!book){
+            return res.status(404).json({ message: "Book not found" });
+        } else {
             book.available = true;
             await book.save();
         }
 
         // Delete the reservation
-        await ReservationModel.findByIdAndDelete(id);
+        await ReservationModel.findByIdAndUpdate(id, { active: false }, { new: true });;
 
         return res.json({ message: "Reservation canceled" });
 

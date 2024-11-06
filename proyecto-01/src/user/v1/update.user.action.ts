@@ -25,7 +25,7 @@ export async function updateUser(req: Request, res: Response) {
 
     try {
         // Buscar al usuario en la base de datos
-        const user = await UserModel.findById(id);
+        const user = await UserModel.findById(id).select('-password');
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }

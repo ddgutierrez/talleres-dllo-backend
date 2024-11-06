@@ -6,8 +6,11 @@ export type ReservationType = {
     bookId: string;
     userId: string;
     reservedBy: string;
+    book: string;
     reservedAt: Date;
     dueDate: Date;
+    returnedAt: Date;
+    active: boolean;
 };
 
 // Define the Reservation schema
@@ -26,6 +29,10 @@ const ReservationSchema = new Schema<ReservationType>({
         type: String,
         required: true
     },
+    book: {
+        type: String,
+        required: true
+    },
     reservedAt: {
         type: Date,
         required: true
@@ -33,6 +40,13 @@ const ReservationSchema = new Schema<ReservationType>({
     dueDate: {
         type: Date,
         required: true
+    },
+    returnedAt: {
+        type: Date,
+    },
+    active: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true,  // Automatically adds createdAt and updatedAt

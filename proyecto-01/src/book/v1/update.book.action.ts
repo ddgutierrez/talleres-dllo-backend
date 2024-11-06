@@ -4,7 +4,7 @@ import { BookModel } from "./book.model";
 // Action to update a book's information
 export async function updateBook(req: Request, res: Response) {
     const { id } = req.params;
-    const { title, author, genre, publishedDate, available } = req.body;
+    const { title, author, genre, publishedDate, available, editorial } = req.body;
 
     try {
         const book = await BookModel.findById(id);
@@ -17,7 +17,8 @@ export async function updateBook(req: Request, res: Response) {
         if (author) book.author = author;
         if (genre) book.genre = genre;
         if (publishedDate) book.publishedDate = publishedDate;
-        if (available !== undefined) book.available = available;
+        if (available) book.available = available;
+        if (editorial) book.editorial = editorial;
 
         const updatedBook = await book.save();
         return res.json({ message: "Book updated successfully", book: updatedBook });
