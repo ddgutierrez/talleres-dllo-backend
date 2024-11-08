@@ -10,7 +10,9 @@ export async function deleteBook(req: Request, res: Response) {
         if (!book) {
             return res.status(404).json({ message: "Book not found" });
         }
-
+        if (!book.active) {
+            return res.status(400).json({ message: "Book is already deactivated" });
+        }
         return res.json({ message: "Book deactivated", book });
     } catch (err: any) {
         const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";

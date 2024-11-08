@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { UserModel } from "../user/v1/user.model";  // Asegúrate de que la ruta de importación sea correcta
+import { UserModel } from "../user/v1/user.model";
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 export async function AuthMiddleware(request: Request, response: Response, next: NextFunction) {
     const authHeader = request.headers.authorization;
@@ -12,20 +16,24 @@ export async function AuthMiddleware(request: Request, response: Response, next:
     }
 
     try {
-        // Extraer el token del encabezado
+        // Extract the token from the header
         const token = authHeader.split(" ")[1];
         
-        // Verificar el token y hacer type assertion para JwtPayload
-        const jwtValues = jwt.verify(token, process.env.JWT_SECRET || "secret") as JwtPayload;
+        // Verify the token and make type assertion for JwtPayload
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new Error("JWT secret is not defined");
+        }
+        const jwtValues = jwt.verify(token, jwtSecret) as JwtPayload;
 
-        // Verificar que el payload tenga un campo `id`
+        // Verify that the payload has an `id` field
         if (!jwtValues || typeof jwtValues !== 'object' || !jwtValues.id) {
             return response.status(401).json({
-                message: "Token inválido: ID de usuario no encontrado."
+                message: "Invalid token: User ID not found."
             });
         }
 
-        // Buscar el usuario en la base de datos para obtener los permisos
+        // Find the user in the database to get the permissions
         const user = await UserModel.findById(jwtValues.id);
 
         if (!user) {
@@ -34,11 +42,11 @@ export async function AuthMiddleware(request: Request, response: Response, next:
             });
         }
 
-        // Adjuntar el usuario completo al objeto `request`, incluyendo los permisos
+        // Attach the full user object to the `request` object, including permissions
         request.body.user = {
             id: user._id,
             email: user.email,
-            permissions: user.permissions,  // Asegúrate de que el modelo de usuario tenga este campo
+            permissions: user.permissions,
             name: user.name,
             active: user.active
         };

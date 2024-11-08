@@ -14,6 +14,10 @@ export async function cancelReservation(req: Request, res: Response) {
             return res.status(404).json({ message: "Reservation not found" });
         }
 
+        if (!reservation.active) {
+            return res.status(400).json({ message: "Reservation is already canceled" });
+        }
+
         if(userid != reservation.userId){
             return res.status(403).json({ message: "You are not authorized to cancel this reservation" });
         }

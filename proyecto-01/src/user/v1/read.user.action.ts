@@ -11,7 +11,7 @@ export async function getUsers(req: Request, res: Response) {
         if (id) {
             const user = await UserModel.findById(id).select('-password');
             if (!user || (!user.active && !includeDisabled)) {
-                return res.status(404).json({ message: "Usuario no encontrado o inhabilitado" });
+                return res.status(404).json({ message: "User not found or deactivated" });
             }
             return res.json(user);
         }
@@ -25,7 +25,7 @@ export async function getUsers(req: Request, res: Response) {
         const users = await UserModel.find(filters).select('-password');
         return res.json(users);
     } catch (err: any) {
-        const errorMessage = err instanceof Error ? err.message : "Ocurrió un error desconocido";
-        return res.status(500).json({ message: "Error al buscar usuarios", error: errorMessage });
+        const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+        return res.status(500).json({ message: "Error when searching users", error: errorMessage });
     }
 }

@@ -8,6 +8,11 @@ export async function createReservation(req: Request, res: Response) {
     try {
         const { bookId, userId } = req.body;
 
+        // Validate input data
+        if (!bookId || !userId) {
+            return res.status(400).json({ message: "Book ID and User ID are required" });
+        }
+
         // Check if the user exists
         const user = await UserModel.findById(userId);
         if (!user) {

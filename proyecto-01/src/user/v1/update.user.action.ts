@@ -10,24 +10,24 @@ export async function updateUser(req: Request, res: Response) {
     const authenticatedUser = req.body.user;
 
     if (!authenticatedUser) {
-        return res.status(401).json({ message: "Usuario no autenticado" });
+        return res.status(401).json({ message: "User not authenticated" });
     }
 
     // Verificar si el usuario autenticado es el mismo que el que se va a actualizar o si tiene permisos para actualizar usuarios
     if (authenticatedUser.id !== id && !authenticatedUser.permissions.includes('update-user')) {
-        return res.status(403).json({ message: "No tienes permiso para actualizar este usuario" });
+        return res.status(403).json({ message: "You dont have permissions to update user" });
     }
 
     // Verificar si se proporcionaron campos para la actualización
     if (!name && !email && !permissions) {
-        return res.status(400).json({ message: "No se proporcionaron campos para la actualización" });
+        return res.status(400).json({ message: "Provide all fields to update" });
     }
 
     try {
         // Buscar al usuario en la base de datos
         const user = await UserModel.findById(id).select('-password');
         if (!user) {
-            return res.status(404).json({ message: "Usuario no encontrado" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         // Actualizar los campos proporcionados
@@ -39,10 +39,10 @@ export async function updateUser(req: Request, res: Response) {
 
         // Guardar el documento actualizado
         const updatedUser = await user.save();
-        return res.json({ message: "Usuario actualizado", user: updatedUser });
+        return res.json({ message: "Updated user", user: updatedUser });
     } catch (err: any) {
         // Manejo seguro del mensaje de error
-        const errorMessage = err instanceof Error ? err.message : "Ocurrió un error desconocido";
-        return res.status(500).json({ message: "Error al actualizar el usuario", error: errorMessage });
+        const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+        return res.status(500).json({ message: "Error updating user", error: errorMessage });
     }
 }

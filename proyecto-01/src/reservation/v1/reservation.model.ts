@@ -9,7 +9,7 @@ export type ReservationType = {
     book: string;
     reservedAt: Date;
     dueDate: Date;
-    returnedAt: Date;
+    returnedAt: Date | null;
     active: boolean;
 };
 
@@ -43,6 +43,7 @@ const ReservationSchema = new Schema<ReservationType>({
     },
     returnedAt: {
         type: Date,
+        default: null
     },
     active: {
         type: Boolean,
