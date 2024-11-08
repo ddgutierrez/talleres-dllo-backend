@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
 import { UserModel } from "./user.model";
+import mongoose from "mongoose";
 
 // Acción para buscar usuarios por ID o filtros
 export async function getUsers(req: Request, res: Response) {
     try {
         const { id } = req.params;
         const { includeDisabled } = req.query;
-
+    
         // Si se proporciona un ID, buscar un solo usuario
         if (id) {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: "Invalid user ID" });
+            }
+            
             const user = await UserModel.findById(id).select('-password');
             if (!user || (!user.active && !includeDisabled)) {
                 return res.status(404).json({ message: "User not found or deactivated" });

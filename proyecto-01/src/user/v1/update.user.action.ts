@@ -1,9 +1,16 @@
 import { Request, Response } from "express";
 import { UserModel, UserType } from "./user.model";
+import mongoose from 'mongoose';
 
 // Acción para actualizar la información de un usuario
 export async function updateUser(req: Request, res: Response) {
     const { id } = req.params;
+
+    // Verificar si el ID es válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const { name, email, permissions } = req.body as Partial<Omit<UserType, '_id'>>;
 
     // Usuario autenticado del middleware

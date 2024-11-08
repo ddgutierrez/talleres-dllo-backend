@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import { UserModel } from "./user.model";
+import mongoose from 'mongoose';
 
 // Acción para desactivar a un usuario (soft delete)
 export async function deleteUser(req: Request, res: Response) {
     const { id } = req.params;
+
+    // Verificar si el ID es válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
 
     // Usuario autenticado del middleware
     const authenticatedUser = req.body.user;

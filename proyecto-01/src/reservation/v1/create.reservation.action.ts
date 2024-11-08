@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ReservationModel } from "./reservation.model";
 import { BookModel } from "../../book/v1/book.model";
 import { UserModel } from "../../user/v1/user.model";
+import mongoose from "mongoose";
 
 // Action to create a new reservation
 export async function createReservation(req: Request, res: Response) {
@@ -9,15 +10,25 @@ export async function createReservation(req: Request, res: Response) {
         const { bookId, userId } = req.body;
 
         // Validate input data
-        if (!bookId || !userId) {
-            return res.status(400).json({ message: "Book ID and User ID are required" });
+        if (!mongoose.Types.ObjectId.isValid(bookId)){
+            return res.status(400).json({ message: "A correct Book ID is required" });
         }
-
+        if (!mongoose.Types.ObjectId.isValid(userId)){
+            return res.status(400).json({ message: "A correct User ID is required" });
+        }
         // Check if the user exists
         const user = await UserModel.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
+        if (!user.active) {
+            return res.status(400).json({ message: "User is not active" });
+        }
+
+        if (userId != req.body.user.id) {
+            return res.status(400).json({ message: "User is not verified" });
+        }   
 
         // Check if the book exists and is available
         const book = await BookModel.findById(bookId);

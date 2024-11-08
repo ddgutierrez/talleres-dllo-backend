@@ -12,7 +12,7 @@ userRoutes.post("/create", createUserController);
 userRoutes.post("/login", loginUserController);
 
 // READ USERS
-userRoutes.get("/",  getUsersController);
+userRoutes.get("/:id?",  getUsersController);
 
 // UPDATE USER (Verifica que sea el propio usuario o que tenga permisos de actualización)
 userRoutes.put(

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { BookModel } from "./book.model";
+import mongoose from "mongoose";
 
 // Action to get books by filters or by ID
 export async function getBooks(req: Request, res: Response) {
@@ -8,6 +9,9 @@ export async function getBooks(req: Request, res: Response) {
 
     try {
         if (id) {
+            if (!mongoose.Types.ObjectId.isValid(id)){
+                return res.status(400).json({ message: "A correct Book ID is required" });
+            }        
             const book = await BookModel.findById(id);
             if (!book) {
                 return res.status(404).json({ message: "Book not found" });

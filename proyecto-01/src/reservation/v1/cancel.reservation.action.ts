@@ -6,8 +6,16 @@ import { BookModel } from "../../book/v1/book.model";
 export async function cancelReservation(req: Request, res: Response) {
     try {
         const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: "Reservation ID is required" });
+        }
+
         const userid = req.body.user.id;
 
+        if (!userid) {
+            return res.status(400).json({ message: "Error fetching User ID" });
+        }
+        
         // Find the reservation
         const reservation = await ReservationModel.findById(id);
         if (!reservation) {
