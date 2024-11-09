@@ -1,36 +1,31 @@
-import { Request, Response } from "express";
 import { UserModel } from "./user.model";
 import mongoose from "mongoose";
 
-// Acción para buscar usuarios por ID o filtros
-export async function getUsers(req: Request, res: Response) {
+// Action to fetch users by ID or filters
+export async function getUsers(filters: any, id?: string, includeDisabled?: boolean): Promise<any> {
     try {
-        const { id } = req.params;
-        const { includeDisabled } = req.query;
-    
-        // Si se proporciona un ID, buscar un solo usuario
+        // If an ID is provided, fetch a single user
         if (id) {
             if (!mongoose.Types.ObjectId.isValid(id)) {
-                return res.status(400).json({ message: "Invalid user ID" });
+                throw new Error("Invalid user ID");
             }
             
             const user = await UserModel.findById(id).select('-password');
             if (!user || (!user.active && !includeDisabled)) {
-                return res.status(404).json({ message: "User not found or deactivated" });
+                throw new Error("User not found or deactivated");
             }
-            return res.json(user);
+            return user;
         }
 
-        // Buscar usuarios activos por defecto
-        const filters: any = {
-            ...(includeDisabled !== 'true' && { active: true })  // Filtrar solo activos si includeDisabled no es 'true'
+        // Fetch active users by default
+        const queryFilters: any = {
+            ...(includeDisabled !== true && { active: true })  // Filter only active users if includeDisabled is not true
         };
 
-        // Buscar usuarios
-        const users = await UserModel.find(filters).select('-password');
-        return res.json(users);
+        // Fetch users
+        const users = await UserModel.find({ ...queryFilters, ...filters }).select('-password');
+        return users;
     } catch (err: any) {
-        const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-        return res.status(500).json({ message: "Error when searching users", error: errorMessage });
+        throw new Error(err.message || "Unknown error occurred");
     }
 }

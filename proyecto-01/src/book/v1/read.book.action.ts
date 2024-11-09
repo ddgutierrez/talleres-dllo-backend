@@ -1,44 +1,22 @@
-import { Request, Response } from "express";
-import { BookModel } from "./book.model";
-import mongoose from "mongoose";
+import { BookModel, BookType } from "./book.model";
 
 // Action to get books by filters or by ID
-export async function getBooks(req: Request, res: Response) {
-    const { id } = req.params;
-    const { title, author, genre, publishedDate, available, editorial, active } = req.query;
-
+export async function getBooks(filters: any, id?: string): Promise<BookType | BookType[]> {
     try {
+        // If an ID is provided, fetch a single book
+        
         if (id) {
-            if (!mongoose.Types.ObjectId.isValid(id)){
-                return res.status(400).json({ message: "A correct Book ID is required" });
-            }        
-            const book = await BookModel.findById(id);
+            const book = await BookModel.findById(id); // Assuming password field is irrelevant for books
             if (!book) {
-                return res.status(404).json({ message: "Book not found" });
+                throw new Error("Book not found");
             }
-            return res.json(book);
+            return book;
         }
 
-        // Create a query object based on the provided filters
-        const query: any = {};
-        if (genre) query.genre = genre;
-        if (publishedDate) query.publishedDate = publishedDate;
-        if (author) query.author = author;
-        if (title) query.title = title;
-        if (available) query.available = available;
-        if (editorial) query.editorial = editorial;
-        // Si el parámetro `active` no se especifica, busca solo las entradas activas
-        if (active !== undefined) {
-            query.active = active;
-        } else {
-            query.active = true; // Por defecto, solo devuelve las entradas activas
-        }
+        const books = await BookModel.find(filters);
 
-
-        const books = await BookModel.find(query);
-        return res.json(books);
+        return books;
     } catch (err: any) {
-        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
-        return res.status(500).json({ message: "Error fetching books", error: errorMessage });
+        throw new Error(err.message || "Unknown error occurred");
     }
 }
